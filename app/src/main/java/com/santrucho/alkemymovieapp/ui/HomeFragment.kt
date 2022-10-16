@@ -8,17 +8,19 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.santrucho.alkemymovieapp.MovieAdapter
+import com.santrucho.alkemymovieapp.R
 import com.santrucho.alkemymovieapp.data.model.Movie
-import com.santrucho.alkemymovieapp.databinding.ActivityMainBinding
 import com.santrucho.alkemymovieapp.databinding.FragmentHomeBinding
 import com.santrucho.alkemymovieapp.domain.DataSource
 import com.santrucho.alkemymovieapp.domain.MovieRepositoryImpl
 import com.santrucho.alkemymovieapp.vo.Resource
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), MovieAdapter.OnMovieClickListener {
 
     private val viewModel by lazy {
         ViewModelProviders.of(
@@ -28,8 +30,8 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private lateinit var adapter : MovieAdapter
-    private lateinit var movieList : List<Movie>
+    //private lateinit var adapter : MovieAdapter
+    //private lateinit var movieList : List<Movie>
 
     private var _binding : FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -47,9 +49,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        movieList = ArrayList()
-        adapter = MovieAdapter(movieList)
-        binding.recyclerView.adapter = adapter
+        //movieList = ArrayList()
+        //binding.recyclerView.adapter = adapter
 
 
         viewModel.fetchMovieList.observe(viewLifecycleOwner, Observer{ result ->
@@ -59,7 +60,7 @@ class HomeFragment : Fragment() {
                 }
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    adapter.setMovieList(result.data)
+                    binding.recyclerView.adapter = MovieAdapter(requireContext(),result.data,this)
                 }
                 is Resource.Failure -> {
                     binding.progressBar.visibility = View.GONE
@@ -69,11 +70,19 @@ class HomeFragment : Fragment() {
         })
     }
 
-    fun setupRecyclerView(){
+    override fun onMovieClick(movie:Movie){
+       val bundle = Bundle()
+        bundle.putParcelable("movie",movie)
+        findNavController().navigate(R.id.action_homeFragment_to_movieDetailFragment,bundle)
+    }
+
+    private fun setupRecyclerView(){
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.addItemDecoration(
             DividerItemDecoration(requireContext(),
                 DividerItemDecoration.VERTICAL)
         )
     }
+
+
 }

@@ -6,4 +6,5 @@ import com.santrucho.alkemymovieapp.vo.Resource
 
 interface MovieRepository {
     suspend fun getMovieList() : Resource<List<Movie>>
+
 }

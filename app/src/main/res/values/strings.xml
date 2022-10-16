@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AlkemyMovieApp</string>
+    <string name="details_title">Detalles de la pelicula</string>
 </resources>

@@ -8,4 +8,5 @@ class DataSource {
     suspend fun getPopularMovie():Resource<List<Movie>>{
         return Resource.Success(RetrofitClient.webService.getPopularMovies().movieList)
     }
+
 }
